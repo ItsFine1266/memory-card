@@ -17,3 +17,7 @@
 .card:hover {
   transform: scale(1.05);
 }
+
+.card img, .card h1 {
+  pointer-events: none;
+}

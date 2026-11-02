@@ -1,29 +1,39 @@
 import { useEffect, useState } from "react";
 import Card from "./Card";
 
-export default function CardContainer() {
-  const pokemonNames = ["pikachu", "bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise", "caterpie", "metapod"];
-  const cards = pokemonNames.map(pokemon => <Card pokemon={pokemon} key={pokemon}></Card>);
+let pokemonNames = ["pikachu", "bulbasaur", "ivysaur", "venusaur", "charmander", "charmeleon", "charizard", "squirtle", "wartortle", "blastoise", "caterpie", "metapod"];
 
+export default function CardContainer() {
   let [clickedPokemon, setClickedPokemon] = useState();
-  const handleClick = (card) => setClickedPokemon(card.lastChild.textContent);
+  let [pokemons, setPokemons] = useState(pokemonNames);
+
+  const handleShuffle = () => {
+    const shuffled = [...pokemonNames].sort(() => 0.5 - Math.random());
+    setPokemons(shuffled);
+  }
+
+  const handleClick = (card) => {
+    setClickedPokemon(card.lastChild.textContent);
+    handleShuffle();
+  };
+
+  const checkClick = (e) => {
+    if (e.target.className === "card") {
+      handleClick(e.target);
+    }
+  }
 
   useEffect(() => {
-    document.querySelectorAll(".card").forEach(card => {
-      card.addEventListener("click", () => handleClick(card));
-      console.log(clickedPokemon)
-    });
+    window.addEventListener("click", checkClick);
 
-    return () => document.querySelectorAll(".card").forEach(
-      card => card.removeEventListener("click", handleClick(card))
-    )
-  }, [clickedPokemon])
+    return () => window.removeEventListener("click", checkClick);
+  }, []);
 
   return (
-    <div className="cards">{cards}</div>
+    <div className="cards">
+      {
+        pokemons.map(pokemon => <Card pokemon={pokemon} className="card" key={pokemon}></Card>)
+      }
+    </div>
   )
-}
-
-function shuffleCards(arr) {
-  return arr.sort(() => 0.5 - Math.random());
 }
